@@ -1,0 +1,44 @@
+version: '2.4'
+
+services:
+  db:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    volumes:
+      - notes-volume-db:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 100
+
+  flyway:
+    image: flyway/flyway:10.18.0
+    command: migrate
+    volumes:
+      - ../flyway/flyway.conf:/flyway/conf/flyway.conf
+      - ../flyway/sql:/flyway/sql
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    image: notes:0.0.1-SNAPSHOT
+    environment:
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    env_file:
+      - .env
+    depends_on:
+      flyway:
+        condition: service_completed_successfully
+
+volumes:
+  notes-volume-db:
