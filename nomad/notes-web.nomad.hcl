@@ -17,6 +17,20 @@ job "notes-web-job" {
 
     task "notes-web-task" {
 
+      template {
+        data        = <<EOH
+{{ range nomadService "notes-postgres-svc" }}
+POSTGRES_ADDRESS={{ .Address }}
+POSTGRES_PORT={{ .Port }}
+POSTGRES_USER=d
+POSTGRES_PASSWORD=d
+POSTGRES_DB=postgres
+{{ end }}
+EOH
+        destination = "local/env.txt"
+        env         = true
+      }
+
       driver = "docker"
 
       config {
