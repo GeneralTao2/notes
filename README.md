@@ -68,6 +68,7 @@ Prerequisite: Create image before run command
 
 Note: The PersistentVolume definition can be omitted because the default storage class (kubectl get sc) provides dynamic provisioning of storage. Therefore, only the PVC is required. In this example, an explicit configuration for the PV was provided to practice PV configuration definitions.
 ```
+    kubectl apply -f kubernetes/environment.yaml -> kubectl get configmaps
  0) kubectl apply -f kubernetes/postgres-pv.yaml
  1) kubectl apply -f kubernetes/postgres-pvc.yaml
  2) kubectl apply -f kubernetes/postgres-deployment.yaml

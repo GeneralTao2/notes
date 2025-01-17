@@ -10,17 +10,31 @@ spec:
           image: flyway/flyway:7.10
           args: ["migrate", "-configFiles=/flyway/flyway.conf"]
           env:
-#            replace with your db credentials
             - name: POSTGRES_ADDRESS
-              value: "postgres-service"
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-app-env
+                  key: postgres-address
             - name: POSTGRES_PORT
-              value: "5432"
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-app-env
+                  key: postgres-port
             - name: POSTGRES_USER
-              value: "postgres"
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-app-env
+                  key: postgres-user
             - name: POSTGRES_PASSWORD
-              value: "vasya98"
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-app-env
+                  key: postgres-password
             - name: POSTGRES_DB
-              value: "postgres"
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-app-env
+                  key: postgres-db
           volumeMounts:
             - name: flyway-sql
               mountPath: /flyway/sql

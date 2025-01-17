@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notes-app-env
+data:
+#  replace db related credentials to correspond your local machine
+  postgres-user: 'postgres'
+  postgres-password: 'vasya98'
+  postgres-address: 'postgres-service'
+  postgres-db: 'postgres'
+  postgres-port: '5432'
+  log-path: '/logs/application.log'

@@ -16,11 +16,16 @@ spec:
         - name: postgres
           image: postgres:16
           env:
-#            replace with your db credentials
             - name: POSTGRES_USER
-              value: postgres
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-app-env
+                  key: postgres-user
             - name: POSTGRES_PASSWORD
-              value: vasya98
+              valueFrom:
+                configMapKeyRef:
+                  name: notes-app-env
+                  key: postgres-password
           ports:
             - containerPort: 5432
           volumeMounts:
