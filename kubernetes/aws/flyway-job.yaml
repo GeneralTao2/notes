@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: flyway-migration-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: flyway
+          image: flyway/flyway:7.10
+          args: ["migrate", "-configFiles=/flyway/flyway.conf"]
+          env:
+#            replace with your db credentials
+            - name: POSTGRES_ADDRESS
+              value: "postgres-service"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "vasya98"
+            - name: POSTGRES_DB
+              value: "postgres"
+          volumeMounts:
+            - name: flyway-sql
+              mountPath: /flyway/sql
+            - name: flyway-config
+              mountPath: /flyway/flyway.conf
+#              subPath: flyway.conf
+      restartPolicy: Never
+
+      volumes:
+        - name: flyway-config
+          hostPath:
+            path: /mnt/c/Users/vsamota/notes/flyway/flyway.conf
+            type: File
+        - name: flyway-sql
+          hostPath:
+            path: /mnt/c/Users/vsamota/notes/flyway/sql
+            type: Directory
