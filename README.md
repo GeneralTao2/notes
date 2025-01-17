@@ -68,6 +68,7 @@ Prerequisite: Create image before run command
 
 Note: The PersistentVolume definition can be omitted because the default storage class (kubectl get sc) provides dynamic provisioning of storage. Therefore, only the PVC is required. In this example, an explicit configuration for the PV was provided to practice PV configuration definitions.
 ```
+local image usage
  0) kubectl apply -f kubernetes/postgres-pv.yaml
  1) kubectl apply -f kubernetes/postgres-pvc.yaml
  2) kubectl apply -f kubernetes/postgres-deployment.yaml
@@ -76,10 +77,29 @@ Note: The PersistentVolume definition can be omitted because the default storage
  5) kubectl apply -f kubernetes/web-application-deployment.yaml
  6) kubectl apply -f kubernetes/web-application-service.yaml
  7) minikube service notes-service --url
+
+ghrc.io image usage
+ 0) kubectl apply -f kubernetes/aws/postgres-pv.yaml
+ 1) kubectl apply -f kubernetes/aws/postgres-pvc.yaml
+ 2) kubectl apply -f kubernetes/aws/postgres-deployment.yaml
+ 3) kubectl apply -f kubernetes/aws/postgres-service.yaml
+ 4) kubectl apply -f kubernetes/aws/flyway-job.yaml
+ 5) run below comand with YOUR_GITHUB_TOKEN and YOUR_EMAIL to generate ghrc-secret.yaml and move it to kubernetes/aws/
+ kubectl create secret docker-registry ghrc-secret \
+ --docker-server=ghcr.io \
+ --docker-username=en-dev-org \
+ --docker-password=<YOUR_GITHUB_TOKEN> \
+ --docker-email=<YOUR_EMAIL> \
+ --output=yaml --dry-run=client > ghrc-secret.yaml
+ 6) kubectl apply -f kubernetes/aws/ghrc-secret.yaml
+ 7) kubectl apply -f kubernetes/aws/web-application-deployment.yaml
+ 8) kubectl apply -f kubernetes/aws/web-application-service.yaml
+ 9) minikube service notes-service --url
 ```
 
 ```
 // to verify if it works 
 kubectl get services
 minikube service notes-service
+
 ```

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-image
+  template:
+    metadata:
+      labels:
+        app: notes-image
+    spec:
+      containers:
+        - name: notes-image
+          image: ghcr.io/en-dev-org/notes:latest
+          imagePullPolicy: Always
+          env:
+#            replace with your db credentials
+            - name: POSTGRES_ADDRESS
+              value: "postgres-service"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "vasya98"
+            - name: POSTGRES_DB
+              value: "postgres"
+            - name: LOG_PATH
+              value: /logs/application.log
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: log-storage
+              mountPath: /logs
+        - name: log-writer-sidecar
+          image: busybox
+          command: ["sh", "-c", "tail -F /logs/application.log > /mnt/log/application.log"]
+          volumeMounts:
+            - name: log-storage
+              mountPath: /logs
+            - name: host-log-storage
+              mountPath: /mnt/log
+      imagePullSecrets:
+        - name: ghrc-secret
+      volumes:
+        - name: log-storage
+          emptyDir: {}
+        - name: host-log-storage
+          hostPath:
+            path: /mnt/c/Users/vsamota/notes/logs
+            type: Directory
