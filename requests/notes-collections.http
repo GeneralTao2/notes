@@ -1,0 +1,11 @@
+###
+GET {{url}}
+Content-Type: application/json
+
+###
+GET {{url}}/notes
+Content-Type: application/json
+
+###
+GET {{url}}/notes/Note 1
+Content-Type: application/json

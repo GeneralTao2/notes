@@ -1,0 +1,57 @@
+name: Build and publish a docker image
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  build-and-push:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Make maven wrapper executable
+        if: contains(matrix.os, 'win') == false
+        run: chmod +x ./mvnw
+
+      - name: Build image
+        run: ./mvnw spring-boot:build-image
+
+      - name: Set up docker build
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set VERSION environment variable
+        run: |
+          echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Push docker image to ghcr.io
+        run: |
+          docker tag notes:${{ env.VERSION }} ghcr.io/${{ github.repository_owner }}/notes:latest
+          docker push ghcr.io/${{ github.repository_owner }}/notes:latest
