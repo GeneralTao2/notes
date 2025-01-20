@@ -48,5 +48,5 @@ spec:
           emptyDir: {}
         - name: host-log-storage
           hostPath:
-            path: /mnt/c/Users/vsamota/notes/logs
+            path: /mnt/c/intbench/notes/logs
             type: Directory
