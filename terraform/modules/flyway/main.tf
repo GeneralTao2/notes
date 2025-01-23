@@ -16,6 +16,7 @@ resource "kubernetes_job" "flyway_migration_job" {
         container {
           name  = "flyway"
           image = "flyway/flyway:7.10"
+          image_pull_policy = "Always"
 
           args = [
             "migrate",

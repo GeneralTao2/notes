@@ -31,7 +31,7 @@ resource "kubernetes_deployment" "notes_app" {
           }
 
           env {
-            name  = "POSTGRES_PORT"
+            name = "POSTGRES_PORT"
             value = tostring(var.postgres_port)
           }
 
@@ -114,8 +114,8 @@ resource "kubernetes_service" "notes_service" {
     port {
       port        = 8080
       target_port = 8080
+      node_port    = 30007
       protocol    = "TCP"
-      node_port    = 8080
     }
 
     type = "NodePort"
