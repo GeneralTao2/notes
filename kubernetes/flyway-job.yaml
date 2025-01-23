@@ -26,15 +26,12 @@ spec:
               mountPath: /flyway/sql
             - name: flyway-config
               mountPath: /flyway/flyway.conf
-#              subPath: flyway.conf
+              subPath: flyway.conf
       restartPolicy: Never
-
       volumes:
         - name: flyway-config
-          hostPath:
-            path: /mnt/c/Users/vsamota/notes/flyway/flyway.conf
-            type: File
+          configMap:
+            name: flyway-config
         - name: flyway-sql
-          hostPath:
-            path: /mnt/c/Users/vsamota/notes/flyway/sql
-            type: Directory
+          configMap:
+            name: flyway-sql

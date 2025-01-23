@@ -103,3 +103,39 @@ kubectl get services
 minikube service notes-service
 
 ```
+# Terraform IaC
+```
+Create a secrets.tfvars file for sensitive data:
+
+postgres_address  = "your-data"
+postgres_port     = your-data
+postgres_user     = "your-data"
+postgres_password = "your-data"
+postgres_db       = "your-data"
+
+Also if you have issues with flyway-sql and flyway-config, you should create configmaps directly
+kubectl create configmap flyway-sql --from-file=<your-sql-files-path>
+kubectl create configmap flyway-config --from-file=<your-config-files-path>
+```
+| **Action**                          | **Command**                                                              |
+|-------------------------------------|--------------------------------------------------------------------------|
+| Initialize Terraform                | `terraform init`                                                         |
+| Plan Terraform Changes              | `terraform plan -var-file=secrets.tfvars`                                |
+| Apply Terraform Changes             | `terraform apply -var-file=secrets.tfvars`                               |
+| View Flyway Job Logs                | `kubectl logs -l job-name=flyway-migration-job`                          |
+| View PostgreSQL Logs                | `kubectl logs -l app=postgres`                                           |
+| View Notes App Logs                 | `kubectl logs -l app=notes-image -c notes-image`                         |
+| Access PostgreSQL                   | `kubectl exec -it <postgres-pod-name> -- psql -U postgres -d postgres`   |
+| Access Application via NodePort     | `http://<node-ip>:<node-port>`                                           |
+| Access Application via Port Forward | `kubectl port-forward svc/notes-service 8080:8080`                       |
+| Destroy Terraform Infrastructure    | `terraform destroy -var-file=secrets.tfvars`                             |
+
+
+```
+
+To verify if it works
+kubectl get all -n default
+kubectl get services
+minikube service notes-service
+
+```
