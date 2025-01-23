@@ -18,6 +18,12 @@ module "postgres" {
   postgres_db       = var.postgres_db
 }
 
+module "configmap" {
+  source            = "./modules/configmap"
+
+  depends_on = [module.postgres]
+}
+
 module "flyway" {
   source            = "./modules/flyway"
   namespace         = "default"
@@ -27,7 +33,7 @@ module "flyway" {
   postgres_password = var.postgres_password
   postgres_db       = var.postgres_db
 
-  depends_on = [module.postgres]
+  depends_on = [module.postgres, module.configmap]
 }
 
 module "notes" {
